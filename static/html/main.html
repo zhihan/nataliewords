@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Natalie's first words</title>
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="/js/offcanvas.js"></script>
+
+</head>
+
+<body class="background">
+  <div class="container">
+    <!-- The navigation bar on the left -->
+    <div class="row row-offcanvas row-offcanvas-left">
+      <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
+        <div class="list-group">
+          <a href="#goto_about" id="nav_about" class="list-group-item">About</a>
+          <a href="#" id = "nav_stats" class = "list-group-item">Stats</a>
+          <a href="#goto_editor" id="nav_editor" class="list-group-item">Edit</a>
+          <a href="#goto_slideshow" id="nav_today" class="list-group-item">Today</a>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-9 background" id="content">
+        <button type="button" class="btn btn-default visible-xs" data-toggle="offcanvas">
+          <svg width="10" height="10">
+            <path d="M0,1 10,1" stroke="#000" stroke-width="2"/>
+            <path d="M0,5 10,5" stroke="#000" stroke-width="2"/>
+            <path d="M0,9 10,9" stroke="#000" stroke-width="2"/>
+          </svg>
+        </button>
+        <!-- The about-->
+        <div id="about" class="hidden">
+          <h1>Natalie's First Words</h1>
+          <h2>Learn new words with your kids</h2>
+          <div class="framed foreground">
+            This simple web app was created to help Natalie to learn new words.
+            Natalie is a first grader who just started to learn reading.
+          </div>
+        </div>
+
+        <div id="stats">
+        </div>
+
+        <div id="editor" class="hidden">
+          <!-- Edit the words learned today -->
+          Editor
+          <div>
+            <textarea rows="20" cols="40" id="edit_input"></textarea>
+          </div>
+        </div>
+        
+        <div id="slideshow" class="hidden">
+          <!-- Slide show div-->
+          <div>
+            Slideshow.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- The required resources-->
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/styles.css">
+  <link rel="stylesheet" type="text/css" href="/css/offcanvas.css">
+  
+  <script src="/js/main.js"></script>
+</body>
+</html>
