@@ -15,7 +15,7 @@ from google.appengine.ext import ndb
 
 package = "Words"
 
-WEB_CLIENT_ID = "607994131901-h6364c6afomr1s72m74m3v36uiiksufn.apps.googleusercontent.com"
+WEB_CLIENT_ID = "607994131901-if7as8ck330umlddcgmnmbhr05isalhm.apps.googleusercontent.com"
 
 """
 Protocol buffers for this API 
