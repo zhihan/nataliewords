@@ -10,13 +10,11 @@ Basic support for words. Listing, merging and serializing
 class Words:
     def __init__(self):
         self.date = datetime.date.today()
-        self.words = ""
-        self.notes = ""
+        self.words = []
     
     def save(self):
         return entities.Words(date = self.date, \
-                              words = self.words, \
-                              notes = self.notes)
+                              words = self.words)
     @staticmethod
     def load(entity):
         w = Words()

@@ -3,9 +3,12 @@ API for the service using Cloud endpoints.
 """
 
 import endpoints
+import datetime
+
 from protorpc import remote
 from protorpc import messages
 from protorpc import message_types
+
 
 package = "Words"
 
@@ -26,6 +29,7 @@ class GetWordsResponse(messages.Message):
 
 class PostWordsRequest(messages.Message):
     words = messages.StringField(1, repeated=True)
+    date = messages.StringField(2)
 
 class PostWordsResponse(messages.Message):
     record = messages.MessageField(Record, 1)
@@ -61,7 +65,12 @@ class WordsApi(remote.Service):
                       name = "postwords")
     def post_words(self, req):
         # TODO (Use real data)
-        rec = Record(date = "2014/1/1",
+        if not req.date:
+            d = "2014/1/1"
+        else:
+            d = req.date
+            
+        rec = Record(date = d,
                      words = req.words)
         return PostWordsResponse(record = rec)
 
