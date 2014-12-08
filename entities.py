@@ -15,8 +15,8 @@ class User(ndb.Model):
 
 class Words(ndb.Model):
     date = ndb.DateProperty(required = True)
-    words = ndb.StringProperty(required = True)
-    notes = ndb.StringProperty()
+    words = ndb.StringProperty(repeated = True)
+
     
 
     
