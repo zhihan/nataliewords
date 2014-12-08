@@ -4,12 +4,14 @@ API for the service using Cloud endpoints.
 
 import endpoints
 import logging
+import datetime
 
 from protorpc import remote
 from protorpc import messages
 from protorpc import message_types
 from words import *
 from google.appengine.ext import ndb
+
 
 package = "Words"
 
@@ -30,6 +32,7 @@ class GetWordsResponse(messages.Message):
 
 class PostWordsRequest(messages.Message):
     words = messages.StringField(1, repeated=True)
+    date = messages.StringField(2)
 
 class PostWordsResponse(messages.Message):
     record = messages.MessageField(Record, 1)
@@ -92,17 +95,23 @@ class WordsApi(remote.Service):
         
         logger = logging.getLogger()
         logger.info("Update words for %s" % current_user.email())
-
-        # TODO (check if data exists)
-        w = Words()
-        w.user = current_user
-        w.words = req.words
-        entity = w.save(u_key)
-        entity.put()
-
-        rec = Record(date = date_to_string(w.date),
-                     words = w.words)
                      
+        if not req.date:
+            # TODO (check if data exists)
+            w = Words()
+            w.user = current_user
+            w.words = req.words
+            entity = w.save(u_key)
+            entity.put()
+
+            rec = Record(date = date_to_string(w.date),
+                         words = w.words)
+        else:
+            d = req.date
+            
+            rec = Record(date = d,
+                         words = req.words)
+
         return PostWordsResponse(record = rec)
 
 application = endpoints.api_server([WordsApi])

@@ -13,10 +13,10 @@ class User(ndb.Model):
     def find(cls, u):
         return cls.query(cls.user == u)
 
-class Words(ndb.Model):
+class Record(ndb.Model):
     date = ndb.DateProperty(required = True)
     words = ndb.StringProperty(repeated = True)
 
     
-
-    
+# A record key is a child of a user key
+# A record uses the date as the id    

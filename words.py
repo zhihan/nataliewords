@@ -11,7 +11,6 @@ class Words:
     def __init__(self):
         self.date = datetime.date.today()
         self.words = []
-        self.notes = ""
         self.user = None
     
     def save(self, parent_key):
@@ -20,6 +19,7 @@ class Words:
                               words = self.words,
                               id = dstr,
                               parent = parent_key)
+    
     @staticmethod
     def load(entity):
         w = Words()
