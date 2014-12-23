@@ -1,6 +1,9 @@
 """
 API for the service using Cloud endpoints.
 
+
+
+
 """
 
 import endpoints
@@ -43,10 +46,6 @@ class WordsApi(remote.Service):
         entity = entities.Record.get_record(endpoints.get_current_user(),
                                             datetime.date.today())
         rec = entities.create_record_message(entity)
-
-        logger = logging.getLogger()
-        logger.info("Get words for %s" % current_user.email())
-
         return GetWordsResponse(records = [rec])
 
     @endpoints.method(PostWordsRequest, PostWordsResponse,

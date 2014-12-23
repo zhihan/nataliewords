@@ -37,7 +37,7 @@ class Record(ndb.Model):
     @staticmethod
     def get_record(user, date):
         key = ndb.Key('User', user.email(),
-                      'Record', d.strftime('%Y%m%d'))
+                      'Record', date.strftime('%Y%m%d'))
         return key.get()
 
 
