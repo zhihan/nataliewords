@@ -1,5 +1,6 @@
 """
 API for the service using Cloud endpoints.
+
 """
 
 import endpoints
@@ -7,46 +8,16 @@ import logging
 import datetime
 
 from protorpc import remote
-from protorpc import messages
-from protorpc import message_types
-from words import *
 from google.appengine.ext import ndb
+from protorpc import message_types
 
+import entities
+from protos import *
 
 package = "Words"
 
 WEB_CLIENT_ID = "607994131901-if7as8ck330umlddcgmnmbhr05isalhm.apps.googleusercontent.com"
 
-"""
-Protocol buffers for this API 
-"""
-class GetUserResponse(messages.Message):
-    email = messages.StringField(1, required=True)
-
-class Record(messages.Message):
-    date = messages.StringField(1, required=True)
-    words = messages.StringField(2, repeated=True)
-
-class GetWordsResponse(messages.Message):
-    records = messages.MessageField(Record, 1, repeated=True)
-
-class PostWordsRequest(messages.Message):
-    words = messages.StringField(1, repeated=True)
-    date = messages.StringField(2)
-
-class PostWordsResponse(messages.Message):
-    record = messages.MessageField(Record, 1)
-
-
-def date_to_string(d):
-    return "%d/%d/%d" % (d.year, d.month, d.day)
-
-def string_to_date(s):
-    parts = s.split('/')
-    d = datetime.date(year = int(parts[0]),
-                      month = int(parts[1]),
-                      day = int(parts[2]))
-    return d
 
 """
 End points
@@ -69,18 +40,13 @@ class WordsApi(remote.Service):
                       path = "getmywords", http_method = "GET",
                       name = "getmywords")
     def get_my_words(self, void_request):
-        d = datetime.date.today()
-        current_user = endpoints.get_current_user()
-        key = ndb.Key('User', current_user.email(),
-                      'Record', d.strftime('%Y%m%d'))
-        entity = key.get()
-        w = Words.load(entity)
+        entity = entities.Record.get_record(endpoints.get_current_user(),
+                                            datetime.date.today())
+        rec = entities.create_record_message(entity)
 
         logger = logging.getLogger()
         logger.info("Get words for %s" % current_user.email())
 
-        rec = Record(date = date_to_string(w.date),
-                     words = w.words)
         return GetWordsResponse(records = [rec])
 
     @endpoints.method(PostWordsRequest, PostWordsResponse,
@@ -89,29 +55,13 @@ class WordsApi(remote.Service):
     def post_words(self, req):
         current_user = endpoints.get_current_user()
 
-        user = entities.User(user = current_user, 
-                            id = current_user.email())
+        user = entities.User.get_user(current_user)
         u_key = user.put()
         
         logger = logging.getLogger()
         logger.info("Update words for %s" % current_user.email())
                      
-        if not req.date:
-            # TODO (check if data exists)
-            w = Words()
-            w.user = current_user
-            w.words = req.words
-            entity = w.save(u_key)
-            entity.put()
-
-            rec = Record(date = date_to_string(w.date),
-                         words = w.words)
-        else:
-            d = req.date
-            
-            rec = Record(date = d,
-                         words = req.words)
-
+        rec = entities.update_record_entity(req, u_key)
         return PostWordsResponse(record = rec)
 
 application = endpoints.api_server([WordsApi])
