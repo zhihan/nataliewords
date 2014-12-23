@@ -15,10 +15,10 @@ class Words:
     
     def save(self, parent_key):
         dstr = self.date.strftime('%Y%m%d')
-        return entities.Words(date = self.date, 
-                              words = self.words,
-                              id = dstr,
-                              parent = parent_key)
+        return entities.Record(date = self.date, 
+                               words = self.words,
+                               id = dstr,
+                               parent = parent_key)
     
     @staticmethod
     def load(entity):

@@ -72,7 +72,7 @@ class WordsApi(remote.Service):
         d = datetime.date.today()
         current_user = endpoints.get_current_user()
         key = ndb.Key('User', current_user.email(),
-                      'Words', d.strftime('%Y%m%d'))
+                      'Record', d.strftime('%Y%m%d'))
         entity = key.get()
         w = Words.load(entity)
 
