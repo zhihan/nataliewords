@@ -22,8 +22,8 @@ class User(ndb.Model):
     user = ndb.UserProperty(required = True)
 
     @classmethod
-    def find(cls, u):
-        return cls.query(cls.user == u)
+    def get_by_user(cls, u):
+        return cls.get_by_id(u.email())
 
     @staticmethod
     def get_user(u):
@@ -36,19 +36,32 @@ class Record(ndb.Model):
 
     @staticmethod
     def get_record(user, date):
+        """ Get record by id, return None if no record is found. """
         key = ndb.Key('User', user.email(),
                       'Record', date.strftime('%Y%m%d'))
         return key.get()
 
+    @classmethod
+    def get_all_records(cls, user):
+        """ Get all records for the specified user. """
+        query = cls.query(ancestor = user.key)
+        return query.fetch()
 
+    
 """
 Create a record message from a record entity
 """
 def create_record_message(entity):
     return protos.Record(date = entity.date.strftime('%Y%m%d'),
                          words = entity.words)
+"""
+Create a list of record messages from a list of entities
+"""
+def create_records(entities):
+    return [create_record_message(e) for e in entities]
 
 
+    
 """
 Update the entity date using the msg
 """

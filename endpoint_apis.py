@@ -1,8 +1,10 @@
 """
 API for the service using Cloud endpoints.
 
-
-
+ - getuser: get the current user.
+ - getmywords: get the words for a specific day (default to today)
+ - getallmywords: get all the words for a specific user
+ - postwords: update the words for a speicific day
 
 """
 
@@ -43,11 +45,29 @@ class WordsApi(remote.Service):
                       path = "getmywords", http_method = "GET",
                       name = "getmywords")
     def get_my_words(self, void_request):
-        entity = entities.Record.get_record(endpoints.get_current_user(),
-                                            datetime.date.today())
-        rec = entities.create_record_message(entity)
-        return GetWordsResponse(records = [rec])
+        user = endpoints.get_current_user()
+        if entities.User.get_by_user(user):
+            entity = entities.Record.get_record(endpoints.get_current_user(),
+                                                datetime.date.today())
+            if entity:
+                rec = entities.create_record_message(entity)
+                return GetWordsResponse(records = [rec])
+            else:
+                return GetWordsResponse(records = [])
+        else:
+            return GetWordsResponse(records = [])
 
+    @endpoints.method(message_types.VoidMessage, GetWordsResponse,
+                      path = "getallmywords", http_method = "GET",
+                      name = "getallmywords")
+    def get_all_my_words(self, void_request):
+        user = entities.User.get_by_user(endpoints.get_current_user())
+        if user:
+            l = entities.Record.get_all_records(user)
+            return GetWordsResponse(records = entities.create_records(l))
+        else:
+            return GetWordsResponse(records = [])
+    
     @endpoints.method(PostWordsRequest, PostWordsResponse,
                       path = "postwords", http_method = "POST",
                       name = "postwords")
