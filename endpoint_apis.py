@@ -1,38 +1,26 @@
 """
 API for the service using Cloud endpoints.
+
+
+
+
 """
 
 import endpoints
+import logging
 import datetime
 
 from protorpc import remote
-from protorpc import messages
+from google.appengine.ext import ndb
 from protorpc import message_types
 
+import entities
+from protos import *
 
 package = "Words"
 
-WEB_CLIENT_ID = "607994131901-h6364c6afomr1s72m74m3v36uiiksufn.apps.googleusercontent.com"
+WEB_CLIENT_ID = "607994131901-if7as8ck330umlddcgmnmbhr05isalhm.apps.googleusercontent.com"
 
-"""
-Protocol buffers for this API 
-"""
-class GetUserResponse(messages.Message):
-    email = messages.StringField(1, required=True)
-
-class Record(messages.Message):
-    date = messages.StringField(1, required=True)
-    words = messages.StringField(2, repeated=True)
-
-class GetWordsResponse(messages.Message):
-    records = messages.MessageField(Record, 1, repeated=True)
-
-class PostWordsRequest(messages.Message):
-    words = messages.StringField(1, repeated=True)
-    date = messages.StringField(2)
-
-class PostWordsResponse(messages.Message):
-    record = messages.MessageField(Record, 1)
 
 """
 End points
@@ -55,23 +43,24 @@ class WordsApi(remote.Service):
                       path = "getmywords", http_method = "GET",
                       name = "getmywords")
     def get_my_words(self, void_request):
-        # TODO (Get the data from the database)
-        fake_record = Record(date = "2014/1/1",
-                             words = ["a", "b"]);
-        return GetWordsResponse(records = [fake_record])
+        entity = entities.Record.get_record(endpoints.get_current_user(),
+                                            datetime.date.today())
+        rec = entities.create_record_message(entity)
+        return GetWordsResponse(records = [rec])
 
     @endpoints.method(PostWordsRequest, PostWordsResponse,
                       path = "postwords", http_method = "POST",
                       name = "postwords")
     def post_words(self, req):
-        # TODO (Use real data)
-        if not req.date:
-            d = "2014/1/1"
-        else:
-            d = req.date
-            
-        rec = Record(date = d,
-                     words = req.words)
+        current_user = endpoints.get_current_user()
+
+        user = entities.User.get_user(current_user)
+        u_key = user.put()
+        
+        logger = logging.getLogger()
+        logger.info("Update words for %s" % current_user.email())
+                     
+        rec = entities.update_record_entity(req, u_key)
         return PostWordsResponse(record = rec)
 
 application = endpoints.api_server([WordsApi])

@@ -1,0 +1,4 @@
+- Check for repeated words. 
+- Move codet to python server side.
+- Create an endpoint save/load example.
+- Implement slideshow.
